@@ -2,7 +2,7 @@
 
 ## Create project
 
-`clone https://github.com/FullStack-HY/bloglist-frontend`\
+`clone`\
 `npm install`\
 `npm install typescript --save`\
 `npm update --dev`\
@@ -12,12 +12,23 @@
 
 ## Run
 
+First start backend (part-4):\
+`npm run watch`
+
+Then start frontend (part-5):\
 `npm start`
 
 ## Tests
 
 ## Ports
 
-3003
+frontend: 3000\
+backend (test): 3002
 
 ## Browser
+
+Frontend:\
+<http://localhost:3000/>
+
+Backend:\
+<http://localhost:3002/api/blogs>
