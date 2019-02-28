@@ -16,21 +16,28 @@ class App extends React.Component {
 
     componentDidMount() {
         blogService.getAll().then(blogs => this.setState({ blogs }));
+
+        const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+        if (loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON);
+            this.setState({ user });
+            blogService.setToken(user.token);
+        }
     }
 
     login = async event => {
         event.preventDefault();
-        console.log(
-            "logging in with",
-            this.state.username,
-            this.state.password
-        );
         try {
             const user = await loginService.login({
                 username: this.state.username,
                 password: this.state.password
             });
 
+            window.localStorage.setItem(
+                "loggedBlogappUser",
+                JSON.stringify(user)
+            );
+            blogService.setToken(user.token);
             this.setState({ username: "", password: "", user });
         } catch (exception) {
             this.setState({
@@ -40,6 +47,13 @@ class App extends React.Component {
                 this.setState({ error: null });
             }, 5000);
         }
+    };
+
+    logout = async event => {
+        event.preventDefault();
+        window.localStorage.removeItem("loggedBlogappUser");
+        blogService.setToken(null);
+        this.setState({ user: null });
     };
 
     handleLoginFieldChange = event => {
@@ -77,22 +91,21 @@ class App extends React.Component {
         const blogForm = () => (
             <div>
                 <h2>Blogit</h2>
-                <p>{this.state.user.name} logged in</p>
-                {this.state.blogs.map(blog => (
-                    <Blog key={blog.id} blog={blog} />
-                ))}
+                <div id="user">
+                    {this.state.user.name} logged in
+                    <form onSubmit={this.logout}>
+                        <button type="submit">logout</button>
+                    </form>
+                </div>
+                <div id="blogs">
+                    {this.state.blogs.map(blog => (
+                        <Blog key={blog.id} blog={blog} />
+                    ))}
+                </div>
             </div>
         );
 
-        return (
-            <div>
-                {this.state.user === null ? (
-                    loginForm()
-                ) : (
-                    <div>{blogForm()}</div>
-                )}
-            </div>
-        );
+        return <div>{this.state.user === null ? loginForm() : blogForm()}</div>;
     }
 }
 
