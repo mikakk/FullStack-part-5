@@ -1,4 +1,7 @@
 import React from "react";
+import Togglable from "./components/Togglable";
+import LoginForm from "./components/LoginForm";
+import BlogForm from "./components/BlogForm";
 import Blog from "./components/Blog";
 import Message from "./components/Message";
 import blogService from "./services/blogs";
@@ -14,6 +17,7 @@ class App extends React.Component {
             newTitle: "",
             newAuthor: "",
             newUrl: "",
+            loginVisible: null,
             username: "",
             password: "",
             user: null
@@ -88,6 +92,7 @@ class App extends React.Component {
                 this.setState({ message: null });
             }, 5000);
         });
+        this.blogForm.toggleVisibility();
     };
 
     handleBlogChange = event => {
@@ -96,30 +101,14 @@ class App extends React.Component {
 
     render() {
         const loginForm = () => (
-            <div>
-                <h2>Kirjaudu</h2>
-                <form onSubmit={this.login}>
-                    <div>
-                        Username
-                        <input
-                            type="text"
-                            name="username"
-                            value={this.state.username}
-                            onChange={this.handleLoginFieldChange}
-                        />
-                    </div>
-                    <div>
-                        Password
-                        <input
-                            type="password"
-                            name="password"
-                            value={this.state.password}
-                            onChange={this.handleLoginFieldChange}
-                        />
-                    </div>
-                    <button type="submit">Login</button>
-                </form>
-            </div>
+            <Togglable buttonLabel="Login">
+                <LoginForm
+                    username={this.state.username}
+                    password={this.state.password}
+                    handleChange={this.handleLoginFieldChange}
+                    handleSubmit={this.login}
+                />
+            </Togglable>
         );
 
         const userForm = () => (
@@ -132,36 +121,18 @@ class App extends React.Component {
         );
 
         const newBlogForm = () => (
-            <div id="newblog">
-                <h2>Create new</h2>
-                <form onSubmit={this.addBlog}>
-                    <div>
-                        Title:
-                        <input
-                            name="newTitle"
-                            value={this.state.newTitle}
-                            onChange={this.handleBlogChange}
-                        />
-                    </div>
-                    <div>
-                        Author:
-                        <input
-                            name="newAuthor"
-                            value={this.state.newAuthor}
-                            onChange={this.handleBlogChange}
-                        />
-                    </div>
-                    <div>
-                        Url:
-                        <input
-                            name="newUrl"
-                            value={this.state.newUrl}
-                            onChange={this.handleBlogChange}
-                        />
-                    </div>
-                    <button type="submit">Save</button>
-                </form>
-            </div>
+            <Togglable
+                buttonLabel="New Blog"
+                ref={component => (this.blogForm = component)}
+            >
+                <BlogForm
+                    newTitle={this.state.newTitle}
+                    newAuthor={this.state.newAuthor}
+                    newUrl={this.state.newUrl}
+                    handleChange={this.handleBlogChange}
+                    onSubmit={this.addBlog}
+                />
+            </Togglable>
         );
 
         const blogsForm = () => (
