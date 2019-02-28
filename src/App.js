@@ -8,6 +8,9 @@ class App extends React.Component {
         super(props);
         this.state = {
             blogs: [],
+            newTitle: "",
+            newAuthor: "",
+            newUrl: "",
             username: "",
             password: "",
             user: null
@@ -41,7 +44,7 @@ class App extends React.Component {
             this.setState({ username: "", password: "", user });
         } catch (exception) {
             this.setState({
-                error: "käyttäjätunnus tai salasana virheellinen"
+                error: "Username or password invalid"
             });
             setTimeout(() => {
                 this.setState({ error: null });
@@ -60,13 +63,35 @@ class App extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
+    addBlog = event => {
+        event.preventDefault();
+        const blogObject = {
+            title: this.state.newTitle,
+            author: this.state.newAuthor,
+            url: this.state.newUrl
+        };
+
+        blogService.create(blogObject).then(newBlog => {
+            this.setState({
+                blogs: this.state.blogs.concat(newBlog),
+                newTitle: "",
+                newAuthor: "",
+                newUrl: ""
+            });
+        });
+    };
+
+    handleBlogChange = event => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
     render() {
         const loginForm = () => (
             <div>
                 <h2>Kirjaudu</h2>
                 <form onSubmit={this.login}>
                     <div>
-                        käyttäjätunnus
+                        Username
                         <input
                             type="text"
                             name="username"
@@ -75,7 +100,7 @@ class App extends React.Component {
                         />
                     </div>
                     <div>
-                        salasana
+                        Password
                         <input
                             type="password"
                             name="password"
@@ -83,29 +108,75 @@ class App extends React.Component {
                             onChange={this.handleLoginFieldChange}
                         />
                     </div>
-                    <button type="submit">kirjaudu</button>
+                    <button type="submit">Login</button>
                 </form>
             </div>
         );
 
-        const blogForm = () => (
-            <div>
-                <h2>Blogit</h2>
-                <div id="user">
-                    {this.state.user.name} logged in
-                    <form onSubmit={this.logout}>
-                        <button type="submit">logout</button>
-                    </form>
-                </div>
-                <div id="blogs">
-                    {this.state.blogs.map(blog => (
-                        <Blog key={blog.id} blog={blog} />
-                    ))}
-                </div>
+        const userForm = () => (
+            <div id="user">
+                {this.state.user.name} logged in
+                <form onSubmit={this.logout}>
+                    <button type="submit">Logout</button>
+                </form>
             </div>
         );
 
-        return <div>{this.state.user === null ? loginForm() : blogForm()}</div>;
+        const newBlogForm = () => (
+            <div id="newblog">
+                <h2>Create new</h2>
+                <form onSubmit={this.addBlog}>
+                    <div>
+                        Title:
+                        <input
+                            name="newTitle"
+                            value={this.state.newTitle}
+                            onChange={this.handleBlogChange}
+                        />
+                    </div>
+                    <div>
+                        Author:
+                        <input
+                            name="newAuthor"
+                            value={this.state.newAuthor}
+                            onChange={this.handleBlogChange}
+                        />
+                    </div>
+                    <div>
+                        Url:
+                        <input
+                            name="newUrl"
+                            value={this.state.newUrl}
+                            onChange={this.handleBlogChange}
+                        />
+                    </div>
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+        );
+
+        const blogsForm = () => (
+            <div id="blogs">
+                <h2>Blogs</h2>
+                {this.state.blogs.map(blog => (
+                    <Blog key={blog.id} blog={blog} />
+                ))}
+            </div>
+        );
+
+        return (
+            <div>
+                {this.state.user === null ? (
+                    loginForm()
+                ) : (
+                    <div>
+                        {userForm()}
+                        {newBlogForm()}
+                        {blogsForm()}
+                    </div>
+                )}
+            </div>
+        );
     }
 }
 
