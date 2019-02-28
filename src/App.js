@@ -1,5 +1,6 @@
 import React from "react";
 import Blog from "./components/Blog";
+import Message from "./components/Message";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -8,6 +9,8 @@ class App extends React.Component {
         super(props);
         this.state = {
             blogs: [],
+            messageType: "",
+            message: null,
             newTitle: "",
             newAuthor: "",
             newUrl: "",
@@ -44,10 +47,11 @@ class App extends React.Component {
             this.setState({ username: "", password: "", user });
         } catch (exception) {
             this.setState({
-                error: "Username or password invalid"
+                messageType: "error",
+                message: "Username or password invalid"
             });
             setTimeout(() => {
-                this.setState({ error: null });
+                this.setState({ message: null });
             }, 5000);
         }
     };
@@ -76,8 +80,13 @@ class App extends React.Component {
                 blogs: this.state.blogs.concat(newBlog),
                 newTitle: "",
                 newAuthor: "",
-                newUrl: ""
+                newUrl: "",
+                messageType: "success",
+                message: "Blog added: " + newBlog.title + " " + newBlog.author
             });
+            setTimeout(() => {
+                this.setState({ message: null });
+            }, 5000);
         });
     };
 
@@ -166,6 +175,10 @@ class App extends React.Component {
 
         return (
             <div>
+                <Message
+                    type={this.state.messageType}
+                    message={this.state.message}
+                />
                 {this.state.user === null ? (
                     loginForm()
                 ) : (
