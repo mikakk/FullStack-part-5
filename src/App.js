@@ -1,8 +1,10 @@
 import React from "react";
 import Togglable from "./components/Togglable";
+import TogglableBlog from "./components/TogglableBlog";
 import LoginForm from "./components/LoginForm";
-import BlogForm from "./components/BlogForm";
+import NewBlogForm from "./components/NewBlogForm";
 import Blog from "./components/Blog";
+/*import BlogBasic from "./components/BlogBasic";*/
 import Message from "./components/Message";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -92,7 +94,7 @@ class App extends React.Component {
                 this.setState({ message: null });
             }, 5000);
         });
-        this.blogForm.toggleVisibility();
+        this.newBlogForm.toggleVisibility();
     };
 
     handleBlogChange = event => {
@@ -123,9 +125,9 @@ class App extends React.Component {
         const newBlogForm = () => (
             <Togglable
                 buttonLabel="New Blog"
-                ref={component => (this.blogForm = component)}
+                ref={component => (this.newBlogForm = component)}
             >
-                <BlogForm
+                <NewBlogForm
                     newTitle={this.state.newTitle}
                     newAuthor={this.state.newAuthor}
                     newUrl={this.state.newUrl}
@@ -135,14 +137,25 @@ class App extends React.Component {
             </Togglable>
         );
 
-        const blogsForm = () => (
+        const blogs = () => (
             <div id="blogs">
                 <h2>Blogs</h2>
                 {this.state.blogs.map(blog => (
-                    <Blog key={blog.id} blog={blog} />
+                    <TogglableBlog key={blog.id} blog={blog}>
+                        <Blog blog={blog} />
+                    </TogglableBlog>
                 ))}
             </div>
         );
+
+        /*const blogsBasic = () => (
+            <div id="blogs-basic">
+                <h2>Blogs basic</h2>
+                {this.state.blogs.map(blog => (
+                    <BlogBasic key={blog.id} blog={blog} />
+                ))}
+            </div>
+        );*/
 
         return (
             <div>
@@ -156,7 +169,7 @@ class App extends React.Component {
                     <div>
                         {userForm()}
                         {newBlogForm()}
-                        {blogsForm()}
+                        {blogs()}
                     </div>
                 )}
             </div>

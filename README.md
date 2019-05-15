@@ -4,6 +4,7 @@
 
 `clone`\
 `npm install`\
+`npm update`\
 `npm install typescript --save`\
 `npm update --dev`\
 `npm audit fix`
